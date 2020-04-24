@@ -1,0 +1,106 @@
+<!DOCTYPE html> 
+<html lang="en" dir="ltr"> 
+
+<head> 
+<meta charset="utf-8"> 
+<title>chatsjs</title> 
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> 
+
+<!-- jQuery library -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script> 
+
+<!-- Latest compiled JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> 
+<link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+<script src="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.js"> </script>
+<script>
+    
+</script>
+
+<script>
+
+    let Jdata = [];
+    console.log("Fetching data...");
+    $.getJSON('http://127.0.0.1:8000/topology/', function(data) {
+        Jdata = data;
+    });
+    console.log("Fetched data");
+
+    function Get(yourUrl){
+        var Httpreq = new XMLHttpRequest(); // a new request
+        Httpreq.open("GET",yourUrl,false);
+        Httpreq.send(null);
+        return Httpreq.responseText;          
+    }
+
+    let topology = [];
+    // let components= [];
+    // let latency= []; 
+    // let capacity= [];
+    function get_topology(Jdata) {
+        for (let i = 0; i < Jdata.length; i=i+1) {
+            topology.push(Jdata[i].topology);
+        }
+    }
+    let topology_data = [];
+    
+    // function get_components(Jdata) {
+    //     for (let i = 0; i < Jdata.length; i=i+1) {
+    //         components.push(Jdata[i].component);
+    //     }
+    // }
+    let sacred_data = [];
+    function get_all_data(data) {
+        // for (let j=0; j < data.length; j++) {
+            for (let i = 0; i < data.length; i++) {
+                sacred_data.push(data[i]);
+            }
+        //}
+    }
+    function allUniqTopoData(topos) {
+        for(let i = 0; i < topos.length; i++) {
+            topology_data[i] = JSON.parse(Get('http://127.0.0.1:8000/topology/'+unique_topology[i]));
+        }
+    }
+    // function get_capacity(Jdata) {
+    //     for (let i = 0; i < Jdata.length; i=i+1) {
+    //         capacity.push(Jdata[i].capacity);
+    //     }
+    // }
+    let unique_topology = [];
+    function removeusingSet(arr) { 
+        unique_topology = Array.from(new Set(arr))
+    } 
+    window.onload = function() {
+            get_topology(Jdata);
+            removeusingSet(topology);
+            allUniqTopoData(unique_topology);
+            get_all_latency(topology_data);
+            var data = {
+                series: [
+                    topo_latency
+                ]
+            };
+            var options = {
+                width: 300,
+                height: 200
+            };
+                
+                new Chartist.Line('.ct-chart', data, options);
+        }
+        </script>
+
+</head> 
+<body>
+    <script>
+        console.log();
+    </script>
+    <div class="ct-chart ct-golden-section" id="chart1"></div>
+    <div class="ct-chart ct-golden-section" id="chart2"></div>
+    
+
+</body>
+
+
+</html> 
